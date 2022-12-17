@@ -92,8 +92,11 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
         fields2.append("`{0}`.`C-_{1}` as `C-_{1}`".format(inputs['f29'], i))
     fields2 = ", ".join(fields2)
     req = (
-        "SELECT {0},{1},{2}.`x` FROM {2} INNER JOIN `{3}` ON (`{2}`.`x` = `{3}`.`x`) WHERE (`{2}`.`x`=ROUND(`{2}`.`x`,{4})) and(`{2}`.`x`{5}{6})and(`{2}`.`x`<={7})".format(
-            fields, fields2, inputs['int225'], inputs['f29'], params['x_step'], cmpr, params['x_min'], params['x_max']))
+        "SELECT {0},{1},{2}.`x` FROM {2} INNER JOIN `{3}` ON (`{2}`.`x` = `{3}`.`x`) WHERE (`{2}`.`x`=ROUND(`{2}`.`x`,{4})) and(`{2}`.`x`{5}{6})and(`{2}`.`x`<={7})"
+        .format(
+            fields, fields2, inputs['int225'], inputs['f29'], params['x_step'], cmpr, params['x_min'], params['x_max']
+        )
+    )
     cur.execute(req)
     RAWDATA = cur.fetchall()
 
@@ -151,8 +154,6 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
             by(analysis, "S_" + str(i), row[str(i)], row['x'])
         data.append("({0})".format(','.join(arr)))
     req = "INSERT INTO `{0}` (`x`,`SumS`, {1}) VALUES {2}; ".format(table_name, ",".join(fields), ",".join(data))
-    # print(req)
-    # input()
     cur.execute(req)
     con.commit()
     analysis = json.dumps(analysis, default=str)

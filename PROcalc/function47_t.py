@@ -58,6 +58,7 @@ def str_(a):
 
 VERSION = 14112022
 
+
 def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     import pymysql
     import decimal as dc
@@ -66,8 +67,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
     req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}".format(VERSION, 1, data_id)
     cur.execute(req)
-    req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) " \
-          "VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
+    req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
     cur.execute(req, (RD.ACC_ID, data_id, "begin"))
     con.commit()
 
@@ -101,7 +101,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
     # S1_max = [val,0]
     for row in RAWDATA:
-        if (row['x'] == 0):
+        if row['x'] == 0:
             # F 2.12#
             B = 0
             for i in range(1, n + 1):
@@ -153,8 +153,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     cur.execute(req)
     con.commit()
     analysis = json.dumps(analysis, default=str)
-    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `analysis`=%s WHERE id={2}".format(VERSION, 2,
-                                                                                                        data_id)
+    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `analysis`=%s WHERE id={2}".format(VERSION, 2, data_id)
     cur.execute(req, (analysis))
     req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) " \
           "VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"

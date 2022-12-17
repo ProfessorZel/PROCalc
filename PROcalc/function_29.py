@@ -11,7 +11,8 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     dc.getcontext().prec = 17
     cur = con.cursor(pymysql.cursors.DictCursor)
 
-    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}".format(VERSION, 1, data_id)
+    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}"\
+        .format(VERSION, 1, data_id)
     cur.execute(req)
     req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) " \
           "VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
@@ -23,7 +24,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
         req = ("SELECT MAX(`x`) as `max_x` FROM `{0}`;".format(table_name))
         cur.execute(req)
         curr_dat = cur.fetchone()
-        max_x = dc.Decimal(curr_dat['max_x']);
+        max_x = dc.Decimal(curr_dat['max_x'])
         if max_x > dc.Decimal(params['x_min']):
             params['x_min'] = curr_dat['max_x']
             secrun = True

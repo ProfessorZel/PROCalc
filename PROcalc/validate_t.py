@@ -11,7 +11,8 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     dc.getcontext().prec = 16
     cur = con.cursor(pymysql.cursors.DictCursor)
 
-    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}".format(VERSION, 1, data_id)
+    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}"\
+        .format(VERSION, 1, data_id)
     cur.execute(req)
     req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) " \
           "VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
@@ -32,8 +33,8 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
         fields.append("`{0}`.`C_{1}` as `C_{1}`".format(inputs['int225'], i))
     fields = ", ".join(fields)
     req = (
-        "SELECT {0},{1}.`x` FROM {1} WHERE (`{1}`.`x`=ROUND(`{1}`.`x`,{2})) and(`{1}`.`x`{3}{4})and(`{1}`.`x`<={5})".format(
-            fields, inputs['int225'], params['x_step'], cmpr, params['x_min'], params['x_max']))
+        "SELECT {0},{1}.`x` FROM {1} WHERE (`{1}`.`x`=ROUND(`{1}`.`x`,{2})) and(`{1}`.`x`{3}{4})and(`{1}`.`x`<={5})"
+        .format(fields, inputs['int225'], params['x_step'], cmpr, params['x_min'], params['x_max']))
     print(req)
     cur.execute(req)
 
@@ -68,8 +69,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
         for i, j in calc:
             fields.append("`A_" + str(i) + "_" + str(j) + "`")
         for row in ANSWERS:
-            arr = []
-            arr.append(str(row['x']))
+            arr = [str(row['x'])]
             for i, j in calc:
                 arr.append(str(row[str(i) + "." + str(j)]))
             data.append("({0})".format(','.join(arr)))

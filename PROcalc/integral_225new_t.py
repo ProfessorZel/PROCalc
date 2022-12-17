@@ -63,7 +63,6 @@ class Quadrature:
             ans = Quadrature.__double_nseg(func, IBC, x0, x1)
             err_est = abs(old_ans - ans)
 
-        # print("Total function calls: " + str(Quadrature.__ncalls))
         return ans
 
     def simpson(func, IBC, x0, x1, rtol, nseg0=1, assert_max=513):
@@ -101,10 +100,10 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
         print("con reopened!")
     cur = con.cursor(pymysql.cursors.DictCursor)
 
-    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}".format(VERSION, 1, data_id)
+    req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}"\
+        .format(VERSION, 1, data_id)
     cur.execute(req)
-    req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) " \
-          "VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
+    req = "INSERT INTO `LOG` (`date`, `lvl`, `executor`, `object`, `object_id`, `action`, `arguments`) VALUES (NOW(), '0', %s, 'data', %s, 'calculation', %s)"
     cur.execute(req, (RD.ACC_ID, data_id, "begin"))
     con.commit()
 
@@ -279,7 +278,6 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
                 # state save
                 if (best[1] != "NULL") and (i in res) and (res[i] != "NULL"):
-                    # определить Depth по изменению значения c интерполяцией по old_st
                     diff = res[i] - best[1]
                     if not diff.is_zero():
                         st = {}
