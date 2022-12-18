@@ -14,12 +14,12 @@ def do_by_id(request):
     cur = con.cursor(pymysql.cursors.DictCursor)
     try:
         req = (
-            "SELECT `host1596090_math`.`data`.*, `host1596090_math`.functions.canonical_name as `f_name`,"
-            "`host1596090_math`.ibc.id as `ibc_id`,`host1596090_math`.ibc.n as `ibc_n`,`host1596090_math`.ibc.B as "
-            "`ibc_B`,`host1596090_math`.ibc.lambda as `ibc_L`,`host1596090_math`.ibc.C_0 as `ibc_C0`,"
+            "SELECT `data`.*, functions.canonical_name as `f_name`,"
+            "ibc.id as `ibc_id`,ibc.n as `ibc_n`,ibc.B as "
+            "`ibc_B`,ibc.lambda as `ibc_L`,ibc.C_0 as `ibc_C0`,"
             "INFORMATION_SCHEMA.TABLES.`table_rows` as `rows_count` FROM `data` INNER JOIN `tasks` ON ("
             "data.taskID=tasks.id) INNER JOIN `ibc` ON (tasks.ibc=ibc.id) INNER JOIN `functions` ON (functions.id "
-            "=tasks.function) INNER JOIN INFORMATION_SCHEMA.TABLES ON (`host1596090_math`.`data`.`table_name` = "
+            "=tasks.function) INNER JOIN INFORMATION_SCHEMA.TABLES ON (`data`.`table_name` = "
             "INFORMATION_SCHEMA.TABLES.`table_name`)  WHERE (data.id={0})".format(data_id))
         cur.execute(req)
         data = cur.fetchone()

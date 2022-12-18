@@ -20,7 +20,7 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     cur.execute(req, (RD.ACC_ID, data_id, "begin"))
     con.commit()
 
-    req = "SELECT `host1596090_math`.`data`.* FROM `data` " \
+    req = "SELECT `data`.* FROM `data` " \
           "INNER JOIN `tasks` ON (data.taskID=tasks.id) INNER JOIN `functions` ON (functions.id=tasks.function)" \
           "WHERE (`functions`.`canonical_name` = 'f47') AND (`tasks`.`ibc`={0}) AND (`data`.`state` IN (2,3,6))"\
         .format(IBC['id'])

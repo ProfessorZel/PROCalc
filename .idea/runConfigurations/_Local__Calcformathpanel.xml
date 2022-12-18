@@ -1,0 +1,38 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[Local] Calcformathpanel" type="aws.lambda" factoryName="Local" nameIsGenerated="true">
+    <option name="credentialProviderId" value="profile:default" />
+    <option name="regionId" value="us-east-1" />
+    <option name="debugHost" value="localhost" />
+    <option name="architecture" />
+    <option name="environmentVariables">
+      <map>
+        <entry key="SQLDB_HOST" value="mysql78.hostland.ru" />
+        <entry key="SQLDB_PASSWORD" value="1V2345dfgf#qSDS" />
+        <entry key="SQLDB_USER" value="host1596090_mathloc" />
+        <entry key="SQLDB_USER_ID" value="11" />
+      </map>
+    </option>
+    <option name="handler" />
+    <option name="image" value="false" />
+    <option name="logicalFunctionName" value="Calcformathpanel" />
+    <option name="memorySize" value="128" />
+    <option name="pathMappings">
+      <list />
+    </option>
+    <option name="platform" />
+    <option name="runtime" />
+    <option name="templateFile" value="$PROJECT_DIR$/template.yaml" />
+    <option name="timeout" value="300" />
+    <option name="useTemplate" value="true" />
+    <option name="input" value="{&#10;  &quot;Records&quot;: [&#10;    {&#10;      &quot;messageId&quot;: &quot;c80e8021-a70a-42c7-a470-796e1186f753&quot;,&#10;      &quot;receiptHandle&quot;: &quot;...&quot;,&#10;      &quot;body&quot;: &quot;{\&quot;id\&quot;:\&quot;664\&quot;}&quot;,&#10;      &quot;attributes&quot;: {&#10;        &quot;ApproximateReceiveCount&quot;: &quot;3&quot;,&#10;        &quot;SentTimestamp&quot;: &quot;1529104986221&quot;,&#10;        &quot;SenderId&quot;: &quot;594035263019&quot;,&#10;        &quot;ApproximateFirstReceiveTimestamp&quot;: &quot;1529104986230&quot;&#10;      },&#10;      &quot;messageAttributes&quot;: {},&#10;      &quot;md5OfBody&quot;: &quot;9bb58f26192e4ba00f01e2e7b136bbd8&quot;,&#10;      &quot;eventSource&quot;: &quot;aws:sqs&quot;,&#10;      &quot;eventSourceARN&quot;: &quot;arn:aws:sqs:us-west-2:594035263019:NOTFIFOQUEUE&quot;,&#10;      &quot;awsRegion&quot;: &quot;us-west-2&quot;&#10;    }&#10;  ]&#10;}" />
+    <option name="inputIsFile" value="false" />
+    <sam>
+      <option name="additionalBuildArgs" value="" />
+      <option name="additionalLocalArgs" value="" />
+      <option name="buildInContainer" value="false" />
+      <option name="dockerNetwork" value="" />
+      <option name="skipImagePull" value="false" />
+    </sam>
+    <method v="2" />
+  </configuration>
+</component>
