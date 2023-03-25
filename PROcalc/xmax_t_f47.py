@@ -6,11 +6,11 @@ VERSION = 14112022
 
 
 def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
-    import pymysql
+    from pymysql.cursors import DictCursor
     import decimal as dc
     import json
     dc.getcontext().prec = 16
-    cur = con.cursor(pymysql.cursors.DictCursor)
+    cur = con.cursor(DictCursor)
 
     req = "UPDATE `data` SET `state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}"\
         .format(VERSION, 1, data_id)

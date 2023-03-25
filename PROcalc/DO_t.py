@@ -3,6 +3,8 @@ import json
 import traceback
 
 import pymysql
+from pymysql.cursors import DictCursor
+
 from . import a_pass as RD
 
 VERSION = 14112022
@@ -10,8 +12,8 @@ VERSION = 14112022
 
 def do_by_id(request):
     data_id = int(request['id'])
-    con = pymysql.connect(RD.host, RD.user, RD.password, RD.db)
-    cur = con.cursor(pymysql.cursors.DictCursor)
+    con = pymysql.connect(host=RD.host, user=RD.user, password=RD.password, database=RD.db)
+    cur = con.cursor(DictCursor)
     try:
         req = (
             "SELECT `data`.*, functions.canonical_name as `f_name`,"
@@ -75,7 +77,7 @@ def do_by_id(request):
             print("Function UNKNOWN")
     except Exception as error:
         if not con or not con.open or not cur:
-            con = pymysql.connect(RD.host, RD.user, RD.password, RD.db)
+            con = pymysql.connect(host=RD.host, user=RD.user, password=RD.password, database=RD.db)
             cur = con.cursor(pymysql.cursors.DictCursor)
             print("con reopened! DO_t")
         err = traceback.format_exc()

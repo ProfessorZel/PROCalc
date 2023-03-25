@@ -11,7 +11,8 @@ dc.getcontext().prec = 16
 TIMEOUT = 12
 TIMEOUT = TIMEOUT * 60
 CHUNK_SIZE = 15
-VERSION = 14112022
+VERSION = 25032023
+DISABLE_CHUNK_RESIZE = False
 
 
 class Quadrature:
@@ -42,7 +43,6 @@ class Quadrature:
         nseg = Quadrature.__nseg
         dx = (x1 - x0) / nseg
         x = x0 + dc.Decimal('0.5') * dx
-        i = 0
         AddedSum = dc.Decimal('0.0')
         for i in np.arange(nseg):
             AddedSum += func(x + i * dx, IBC)
@@ -90,15 +90,17 @@ class Quadrature:
 def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     global CHUNK_SIZE
     global TIMEOUT
+    global DISABLE_CHUNK_RESIZE
     begin_time = time.time()
     script_time = time.time()
     times = []
     import pymysql
+    from pymysql.cursors import DictCursor
 
     if not con or not con.open:
-        con = pymysql.connect(RD.host, RD.user, RD.password, RD.db)
+        con = pymysql.connect(host=RD.host, user=RD.user, password=RD.password, database=RD.db)
         print("con reopened!")
-    cur = con.cursor(pymysql.cursors.DictCursor)
+    cur = con.cursor(DictCursor)
 
     req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}"\
         .format(VERSION, 1, data_id)
@@ -109,6 +111,12 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
     t = dc.Decimal(params['t'])
     ACCURACY = dc.Decimal(params['accuracy'])
+
+    if 'chunk_size' in params:
+        params['chunk_size'] = int(params['chunk_size'])
+        if params['chunk_size'] > 0:
+            CHUNK_SIZE = params['chunk_size']
+            DISABLE_CHUNK_RESIZE = True
 
     fields = []
     for i in range(1, n + 1):
@@ -134,30 +142,30 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     Delta = dc.Decimal('0.1') ** ACCURACY
     if n == 1:
         from . import fc_exp1 as fc
-    if n == 2:
+    elif n == 2:
         from . import fc_exp2 as fc
-    if n == 3:
+    elif n == 3:
         from . import fc_exp3 as fc
-    if n == 4:
+    elif n == 4:
         from . import fc_exp4 as fc
-    if n == 5:
+    elif n == 5:
         from . import fc_exp5 as fc
-    if n == 6:
+    elif n == 6:
         from . import fc_exp6 as fc
-    if n == 7:
+    elif n == 7:
         from . import fc_exp7 as fc
-    if n == 8:
+    elif n == 8:
         from . import fc_exp8 as fc
-    if n == 9:
+    elif n == 9:
         from . import fc_exp9 as fc
-    if n == 10:
+    elif n == 10:
         from . import fc_exp10 as fc
-    if n == 11:
+    elif n == 11:
         from . import fc_exp11 as fc
-    if n == 12:
+    elif n == 12:
         from . import fc_exp12 as fc
-    if n > 12:
-        raise "n > 12, no pre-generated links"
+    else:
+        raise AssertionError("n > 12, no pre-generated links")
     f = fc.links()
 
     base = None
@@ -316,13 +324,13 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
         # time based CHUNK_SIZE
         active_time = time.time() - script_time
-        if active_time >= TIMEOUT * 0.7:
+        if active_time >= TIMEOUT * 0.7 and not DISABLE_CHUNK_RESIZE:
             CHUNK_SIZE = max(1, round((TIMEOUT * 0.9 - active_time) / (sum(times) / float(len(times))) * 0.9))
             print("new time based CHUNCK_SIZE:", CHUNK_SIZE)
         if len(chunk) >= CHUNK_SIZE:
             if not con or not con.open or not cur:
-                con = pymysql.connect(RD.host, RD.user, RD.password, RD.db)
-                cur = con.cursor(pymysql.cursors.DictCursor)
+                con = pymysql.connect(host=RD.host, user=RD.user, password=RD.password, database=RD.db)
+                cur = con.cursor(DictCursor)
                 print("con reopened!")
             fields = ['`x`', '`t`']
             for i in range(1, n + 1):
@@ -340,8 +348,8 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
                 cur.execute(req, (RD.ACC_ID, data_id, str(error)))
                 con.commit()
     if not con or not con.open or not cur:
-        con = pymysql.connect(RD.host, RD.user, RD.password, RD.db)
-        cur = con.cursor(pymysql.cursors.DictCursor)
+        con = pymysql.connect(host=RD.host, user=RD.user, password=RD.password, database=RD.db)
+        cur = con.cursor(DictCursor)
         print("con reopened!")
     if len(chunk) > 0:
         fields = ['`x`', '`t`']

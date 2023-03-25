@@ -6,11 +6,11 @@ VERSION = 14112022
 
 
 def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
-    import pymysql
+    from pymysql.cursors import DictCursor
     import decimal as dc
     import json
     dc.getcontext().prec = 16
-    cur = con.cursor(pymysql.cursors.DictCursor)
+    cur = con.cursor(DictCursor)
 
     req = "UPDATE `data` SET `state`={0},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={1}".format(1, data_id)
     cur.execute(req)
@@ -21,8 +21,8 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
 
     req = "SELECT `data`.* " \
           "FROM `data` INNER JOIN `tasks` ON (data.taskID=tasks.id) INNER JOIN `functions` ON (functions.id =tasks.function) " \
-          "WHERE (`functions`.`canonical_name` = 'f47_x_normalised') AND (`tasks`.`ibc`={0}) AND (`data`.`state` IN (2,3,6))".format(
-        IBC['id'])
+          "WHERE (`functions`.`canonical_name` = 'f47_x_normalised') AND (`tasks`.`ibc`={0}) AND (`data`.`state` IN (2,3,6))" \
+        .format(IBC['id'])
     print(req)
     cur.execute(req)
 

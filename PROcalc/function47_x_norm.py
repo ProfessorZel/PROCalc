@@ -60,10 +60,10 @@ VERSION = 14112022
 
 
 def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
-    import pymysql
+    from pymysql.cursors import DictCursor
     import decimal as dc
     dc.getcontext().prec = 16
-    cur = con.cursor(pymysql.cursors.DictCursor)
+    cur = con.cursor(DictCursor)
 
     req = "UPDATE `data` SET `version`={0},`state`={1},`time`=NOW(), `attempt` = `attempt` + 1 WHERE id={2}".format(VERSION, 1, data_id)
     cur.execute(req)
@@ -72,7 +72,6 @@ def run(con, data_id, n, IBC, table_name, inputs, params, count, RD):
     cur.execute(req, (RD.ACC_ID, data_id, "begin"))
     con.commit()
 
-    max_x = -1
     cmpr = ">="
     if count > 0:
         req = ("SELECT MAX(`x`) as `max_x` FROM `{0}`;".format(table_name))
